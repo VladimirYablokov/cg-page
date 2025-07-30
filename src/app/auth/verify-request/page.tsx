@@ -1,8 +1,8 @@
-export default function VerifyRequestPage() {
+export default function VerifyRequest() {
     return (
-        <div style={{ padding: "2rem" }}>
-            <h1>Проверьте свою почту 📬</h1>
-            <p>Мы отправили вам ссылку для входа. Перейдите по ней, чтобы войти.</p>
+        <div className="max-w-md mx-auto mt-10">
+            <h1 className="text-xl font-semibold">Письмо отправлено</h1>
+            <p>Проверьте ваш почтовый ящик, чтобы завершить вход.</p>
         </div>
     );
 }
