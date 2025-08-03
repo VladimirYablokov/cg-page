@@ -1,10 +1,17 @@
-import UserNav from "../../components/UserNav";
+import './globals.css';
+import { Providers } from './providers';
 
-export default function Header() {
+export const metadata = {
+    title: 'Моё портфолио',
+    description: '...',
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <header className="p-4 shadow bg-white flex justify-between">
-            <h1 className="text-xl font-bold">Моё портфолио</h1>
-            <UserNav />
-        </header>
+        <html lang="ru">
+            <body>
+                <Providers>{children}</Providers>
+            </body>
+        </html>
     );
 }

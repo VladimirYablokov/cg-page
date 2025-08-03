@@ -1,19 +1,17 @@
-"use client";
-import { signIn, signOut, useSession } from "next-auth/react";
+'use client';
+
+import { useSession, signIn, signOut } from 'next-auth/react';
 
 export default function UserNav() {
     const { data: session, status } = useSession();
 
-    if (status === "loading") {
+    if (status === 'loading') {
         return <p>Загрузка...</p>;
     }
 
     if (!session) {
         return (
-            <button
-                onClick={() => signIn("email")}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-            >
+            <button onClick={() => signIn()} className="text-sm text-blue-600">
                 Войти
             </button>
         );
@@ -21,11 +19,8 @@ export default function UserNav() {
 
     return (
         <div className="flex items-center gap-4">
-            <span className="text-gray-700">{session.user?.email}</span>
-            <button
-                onClick={() => signOut()}
-                className="px-4 py-2 bg-red-500 text-white rounded"
-            >
+            <p className="text-sm">{session.user?.email}</p>
+            <button onClick={() => signOut()} className="text-sm text-red-600">
                 Выйти
             </button>
         </div>
