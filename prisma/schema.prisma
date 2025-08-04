@@ -6,14 +6,14 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  Profile       Profile?
+  profile       Profile?  @relation(fields: [id], references: [userId]) // исправлено: с заглавной на строчную
 }
 
 model Profile {
   id        String   @id @default(cuid())
-  bio       String? // Краткое описание
-  image     String? // URL на аватар
-  website   String? // Личный сайт или соцсети
+  bio       String?
+  image     String?
+  website   String?
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())

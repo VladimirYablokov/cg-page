@@ -1,5 +1,6 @@
 import './globals.css';
 import { Providers } from './providers';
+import {SessionProvider} from "next-auth/react";
 
 export const metadata = {
     title: 'Моё портфолио',

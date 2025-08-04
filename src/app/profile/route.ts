@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import {authOptions} from "@/app/api/auth/[...nextauth]/route";
+import {authOptions} from "@/lib/authOption";
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
@@ -14,10 +14,10 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
         where: { email: session.user.email },
-        include: { profile: true },
+        include: { Profile: true },
     });
 
-    return NextResponse.json(user?.profile || null);
+    return NextResponse.json(user?.Profile || null);
 }
 
 export async function PUT(req: Request) {
