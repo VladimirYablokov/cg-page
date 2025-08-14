@@ -6,7 +6,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  profile       Profile?  @relation(fields: [id], references: [userId]) // исправлено: с заглавной на строчную
+  profile       Profile?  @relation("UserProfile")
 }
 
 model Profile {
@@ -15,7 +15,7 @@ model Profile {
   image     String?
   website   String?
   userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation("UserProfile", fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
