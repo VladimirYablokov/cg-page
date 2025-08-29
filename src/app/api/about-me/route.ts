@@ -1,4 +1,3 @@
-// src/app/api/about-me/route.ts
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOption";
 import { NextResponse } from "next/server";
@@ -22,7 +21,6 @@ export async function GET() {
     return NextResponse.json(user?.profile || null);
 }
 
-// PUT — обновить или создать профиль
 export async function PUT(req: Request) {
     const session = await getServerSession(authOptions);
 
