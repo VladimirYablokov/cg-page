@@ -1,58 +1,59 @@
-'use client';
+// src/app/about-me/page.tsx
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from "react";
+import useSWR from "swr";
+import AboutMeView from "@/components/about/AboutMeViev";
+import AboutMeForm from "@/components/about/AboutMeForm";
+import { useSession, signIn } from "next-auth/react";
+
+const fetcher = (url: string) => fetch(url).then((r) => {
+    if (!r.ok) throw new Error(`Fetch failed ${r.status}`);
+    return r.json();
+});
 
 export default function AboutMePage() {
-    const [loading, setLoading] = useState(true);
-    const [bio, setBio] = useState('');
-    const [image, setImage] = useState('');
-    const [website, setWebsite] = useState('');
+    const { status } = useSession();
+    const { data, isLoading, error, mutate } = useSWR("/api/profile", fetcher);
+    const [editing, setEditing] = useState(false);
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-            const res = await fetch('/api/about-me');
-            if (res.ok) {
-                const data = await res.json();
-                if (data) {
-                    setBio(data.bio || '');
-                    setImage(data.image || '');
-                    setWebsite(data.website || '');
-                }
-            }
-            setLoading(false);
-        };
-        fetchProfile();
-    }, []);
+    if (status === "loading") return <p className="p-6">Загрузка сессии…</p>;
+    if (status === "unauthenticated") {
+        return (
+            <div className="p-6">
+                <p className="mb-4">Нужно войти, чтобы редактировать профиль.</p>
+                <button
+                    onClick={() => signIn("email")}
+                    className="rounded-xl px-4 py-2 border"
+                >
+                    Войти по email
+                </button>
+            </div>
+        );
+    }
 
-    const handleSave = async () => {
-        const res = await fetch('/api/about-me', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ bio, image, website }),
-        });
-
-        if (res.ok) {
-            alert('Профиль обновлён!');
-        } else {
-            alert('Ошибка обновления');
-        }
-    };
-
-    if (loading) return <p>Загрузка...</p>;
+    if (isLoading) return <p className="p-6">Загрузка профиля…</p>;
+    if (error) return <p className="p-6 text-red-600">Ошибка: {String(error.message || error)}</p>;
 
     return (
-        <div style={{ maxWidth: 500, margin: 'auto', padding: 20 }}>
-            <h1>About Me</h1>
-            <label>Bio:</label>
-            <textarea value={bio} onChange={(e) => setBio(e.target.value)} />
-
-            <label>Image URL:</label>
-            <input value={image} onChange={(e) => setImage(e.target.value)} />
-
-            <label>Website:</label>
-            <input value={website} onChange={(e) => setWebsite(e.target.value)} />
-
-            <button onClick={handleSave} style={{ marginTop: 10 }}>Сохранить</button>
-        </div>
+        <main className="p-6 space-y-6">
+            {!editing ? (
+                <AboutMeView
+                    bio={data?.bio}
+                    image={data?.image}
+                    website={data?.website}
+                    onEdit={() => setEditing(true)}
+                />
+            ) : (
+                <AboutMeForm
+                    initial={data ?? null}
+                    onCancel={() => setEditing(false)}
+                    onSaved={(saved) => {
+                        mutate(saved, false);
+                        setEditing(false);
+                    }}
+                />
+            )}
+        </main>
     );
 }
